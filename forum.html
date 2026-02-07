@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN CTF - Community Forum</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="lang.js"></script>
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="langEnBtn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" id="langCkbBtn" onclick="setLanguage('ckb')">کوردی</button>
+    </div>
+
+    <div class="ctf-container">
+        <nav class="ctf-nav">
+            <div class="nav-left">
+                <h1 class="nav-title">⚫ RAVEN Forum</h1>
+            </div>
+            <div class="nav-right">
+                <a href="ctf.html" class="nav-link">> Challenges</a>
+                <a href="writeups.html" class="nav-link">> Writeups</a>
+                <a href="admin.html" class="nav-link" style="color: #ff6b6b;">> Admin</a>
+                <a href="index.html" class="nav-link">> Home</a>
+            </div>
+        </nav>
+
+        <div style="margin-top: 70px; padding: 40px 20px;">
+            <div class="forum-header">
+                <h2>> Community Forum</h2>
+                <button class="btn btn-primary" onclick="showCreateThread()">> Start Discussion</button>
+            </div>
+
+            <div style="background: rgba(0, 255, 150, 0.05); border: 1px solid rgba(0, 255, 150, 0.2); padding: 20px; border-radius: 5px; margin: 20px 0;">
+                <h3 style="color: #00ff96; margin-bottom: 10px;">💬 Welcome to the Forum</h3>
+                <p style="color: #ccc; line-height: 1.6; margin: 0;">Ask questions, share tips, discuss hacking strategies, and connect with other hackers. Whether you're stuck on a challenge or want to share a clever technique, this is the place to discuss anything security-related!</p>
+            </div>
+
+            <!-- Create Thread Modal -->
+            <div id="createThreadModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeCreateThread()">&times;</span>
+                    <h2>Start New Discussion</h2>
+                    <form id="createThreadForm">
+                        <input type="text" placeholder="Discussion title (be specific!)" id="threadTitle" required>
+                        <select id="threadCategory">
+                            <option value="general">💭 General Discussion</option>
+                            <option value="help">❓ Help & Questions</option>
+                            <option value="tips">💡 Tips & Tricks</option>
+                            <option value="tools">🔧 Tools & Resources</option>
+                            <option value="bug">🐛 Bug Reports</option>
+                        </select>
+                        <textarea placeholder="Your message... (ask clearly, provide details)" id="threadContent" rows="8" required></textarea>
+                        <button type="submit" class="btn btn-primary">> Create Thread</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Search & Filter -->
+            <div class="forum-filters">
+                <input type="text" id="forumSearch" placeholder="> Search discussions..." class="search-input">
+                <select id="categoryFilter" onchange="filterThreads()">
+                    <option value="">All Categories</option>
+                    <option value="general">General</option>
+                    <option value="help">Help</option>
+                    <option value="tips">Tips</option>
+                    <option value="tools">Tools</option>
+                    <option value="bug">Bugs</option>
+                </select>
+            </div>
+
+            <!-- Threads List -->
+            <div id="threadsList" class="threads-list">
+                <!-- Threads will load here -->
+            </div>
+
+            <!-- Thread Detail Modal -->
+            <div id="threadDetailModal" class="modal">
+                <div class="modal-content thread-detail">
+                    <span class="close" onclick="closeThreadDetail()">&times;</span>
+                    <div id="threadDetailContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="ctf.js"></script>
+    <script>
+        // Forum Functions
+        function showCreateThread() {
+            document.getElementById('createThreadModal').style.display = 'block';
+        }
+
+        function closeCreateThread() {
+            document.getElementById('createThreadModal').style.display = 'none';
+        }
+
+        function closeThreadDetail() {
+            document.getElementById('threadDetailModal').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadThreads();
+
+            const createThreadForm = document.getElementById('createThreadForm');
+            if (createThreadForm) {
+                createThreadForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const userEmail = localStorage.getItem('ctfUserEmail');
+                    const userAlias = localStorage.getItem('ctfUserAlias');
+
+                    if (!userEmail) {
+                        showAlert('Please login first', 'error');
+                        return;
+                    }
+
+                    const thread = {
+                        id: Date.now(),
+                        title: document.getElementById('threadTitle').value,
+                        category: document.getElementById('threadCategory').value,
+                        content: document.getElementById('threadContent').value,
+                        author: userAlias,
+                        email: userEmail,
+                        date: new Date().toISOString(),
+                        replies: 0,
+                        views: 0,
+                        locked: false
+                    };
+
+                    let threads = JSON.parse(localStorage.getItem('forumThreads')) || [];
+                    threads.push(thread);
+                    localStorage.setItem('forumThreads', JSON.stringify(threads));
+
+                    showAlert('Thread created!', 'success');
+                    closeCreateThread();
+                    createThreadForm.reset();
+                    loadThreads();
+                });
+            }
+
+            document.getElementById('forumSearch').addEventListener('input', filterThreads);
+        });
+
+        function loadThreads() {
+            const threads = JSON.parse(localStorage.getItem('forumThreads')) || [];
+            const threadsList = document.getElementById('threadsList');
+
+            if (threads.length === 0) {
+                threadsList.innerHTML = '<p style="color: #888; text-align: center;">No discussions yet - start one!</p>';
+                return;
+            }
+
+            const sorted = threads.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const categoryIcons = {
+                general: '💬',
+                help: '❓',
+                tips: '💡',
+                tools: '🛠️',
+                bug: '🐛'
+            };
+
+            threadsList.innerHTML = sorted.map(thread => `
+                <div class="thread-card" onclick="viewThread(${thread.id})">
+                    <div class="thread-header">
+                        <span class="thread-icon">${categoryIcons[thread.category]}</span>
+                        <h3>${thread.title}</h3>
+                    </div>
+                    <p class="thread-author">by ${thread.author} • ${new Date(thread.date).toLocaleDateString()}</p>
+                    <p class="thread-preview">${thread.content.substring(0, 100)}...</p>
+                    <div class="thread-stats">
+                        <span>👁️ ${thread.views} views</span>
+                        <span>💬 ${thread.replies} replies</span>
+                        <span class="thread-category">${thread.category}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterThreads() {
+            const searchTerm = document.getElementById('forumSearch').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const threads = JSON.parse(localStorage.getItem('forumThreads')) || [];
+
+            let filtered = threads.filter(t => {
+                const matchesSearch = t.title.toLowerCase().includes(searchTerm) || 
+                                     t.content.toLowerCase().includes(searchTerm) ||
+                                     t.author.toLowerCase().includes(searchTerm);
+                const matchesCategory = !category || t.category === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            const threadsList = document.getElementById('threadsList');
+            if (filtered.length === 0) {
+                threadsList.innerHTML = '<p style="color: #888; text-align: center;">No discussions found</p>';
+                return;
+            }
+
+            const categoryIcons = {
+                general: '💬',
+                help: '❓',
+                tips: '💡',
+                tools: '🛠️',
+                bug: '🐛'
+            };
+
+            threadsList.innerHTML = filtered.sort((a, b) => new Date(b.date) - new Date(a.date)).map(thread => `
+                <div class="thread-card" onclick="viewThread(${thread.id})">
+                    <div class="thread-header">
+                        <span class="thread-icon">${categoryIcons[thread.category]}</span>
+                        <h3>${thread.title}</h3>
+                    </div>
+                    <p class="thread-author">by ${thread.author} • ${new Date(thread.date).toLocaleDateString()}</p>
+                    <p class="thread-preview">${thread.content.substring(0, 100)}...</p>
+                    <div class="thread-stats">
+                        <span>👁️ ${thread.views} views</span>
+                        <span>💬 ${thread.replies} replies</span>
+                        <span class="thread-category">${thread.category}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewThread(id) {
+            const threads = JSON.parse(localStorage.getItem('forumThreads')) || [];
+            const thread = threads.find(t => t.id === id);
+
+            if (!thread) return;
+
+            thread.views = (thread.views || 0) + 1;
+            localStorage.setItem('forumThreads', JSON.stringify(threads));
+
+            const categoryEmojis = {
+                general: '💬',
+                help: '❓',
+                tips: '💡',
+                tools: '🛠️',
+                bug: '🐛'
+            };
+
+            document.getElementById('threadDetailContent').innerHTML = `
+                <h2>${categoryEmojis[thread.category]} ${thread.title}</h2>
+                <p class="thread-meta">by <strong>${thread.author}</strong> • ${new Date(thread.date).toLocaleString()}</p>
+                <div class="thread-full-content">${thread.content}</div>
+                <div class="thread-actions">
+                    <button class="btn btn-small" onclick="replyThread(${id})">> Reply</button>
+                    <button class="btn btn-small" onclick="likeThread(${id})">> Like</button>
+                </div>
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #00ffff;">
+                    <p style="color: #888;">Views: ${thread.views} | Replies: ${thread.replies}</p>
+                </div>
+            `;
+
+            document.getElementById('threadDetailModal').style.display = 'block';
+        }
+
+        function replyThread(id) {
+            const reply = prompt('Your reply:');
+            if (reply) {
+                const threads = JSON.parse(localStorage.getItem('forumThreads')) || [];
+                const thread = threads.find(t => t.id === id);
+                if (thread) {
+                    thread.replies = (thread.replies || 0) + 1;
+                    localStorage.setItem('forumThreads', JSON.stringify(threads));
+                    showAlert('Reply posted!', 'success');
+                    viewThread(id);
+                }
+            }
+        }
+
+        function likeThread(id) {
+            showAlert('Liked!', 'success');
+        }
+    </script>
+</body>
+
+</html>

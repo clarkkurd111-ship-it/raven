@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN | User Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <div class="container">
+        <div class="raven-title">RAVEN</div>
+        <div class="creator-credit">created by dana namat</div>
+        <div class="chinese-chars">黑客 | 入侵 | 网络</div>
+
+        <div class="profile-wrapper">
+            <div class="profile-nav">
+                <button class="profile-nav-btn active" onclick="showSection('profile-info', this)"> Profile
+                    Info</button>
+                <button class="profile-nav-btn" onclick="showSection('sessions', this)"> Sessions</button>
+                <button class="profile-nav-btn" onclick="showSection('security', this)"> Security</button>
+                <button class="profile-nav-btn activity-btn" onclick="window.location.href='activity.html'">
+                    Activity</button>
+                <button class="profile-nav-btn logout-btn" onclick="logout()"> Logout</button>
+            </div>
+
+            <!-- Profile Information Section -->
+            <div id="profile-info" class="profile-section active">
+                <h2>> Profile Information</h2>
+                <div class="profile-info-box">
+                    <div class="info-item">
+                        <label>Full Name:</label>
+                        <p id="profileName"></p>
+                    </div>
+                    <div class="info-item">
+                        <label>Email:</label>
+                        <p id="profileEmail"></p>
+                    </div>
+                    <div class="info-item">
+                        <label>Email Status:</label>
+                        <p id="emailStatus"><span class="badge-verified">✓ Verified</span></p>
+                    </div>
+                    <div class="info-item">
+                        <label>Member Since:</label>
+                        <p id="memberSince"></p>
+                    </div>
+                    <div class="info-item">
+                        <label>Last Login:</label>
+                        <p id="lastLogin"></p>
+                    </div>
+                    <button class="btn" onclick="showSection('edit-profile', this)">> Edit Profile</button>
+                </div>
+            </div>
+
+            <!-- Edit Profile Section -->
+            <div id="edit-profile" class="profile-section">
+                <h2>> Edit Profile</h2>
+                <form id="editProfileForm">
+                    <div class="form-group">
+                        <label for="editFullName">Full Name</label>
+                        <input type="text" id="editFullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" name="email" required>
+                    </div>
+                    <button type="submit" class="btn">> Save Changes</button>
+                    <button type="button" class="btn btn-secondary" onclick="showSection('profile-info', this)">>
+                        Cancel</button>
+                </form>
+            </div>
+
+            <!-- Active Sessions Section -->
+            <div id="sessions" class="profile-section">
+                <h2>> Active Sessions</h2>
+                <div id="sessionsList" class="sessions-list">
+                    <!-- Sessions will be populated here -->
+                </div>
+            </div>
+
+            <!-- Security Section -->
+            <div id="security" class="profile-section">
+                <h2>> Security Settings</h2>
+
+                <div class="security-box">
+                    <h3>Change Password</h3>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label for="secCurrentPassword">Current Password</label>
+                            <input type="password" id="secCurrentPassword" name="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="secNewPassword">New Password</label>
+                            <input type="password" id="secNewPassword" name="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="secConfirmPassword">Confirm Password</label>
+                            <input type="password" id="secConfirmPassword" name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn">> Update Password</button>
+                    </form>
+                </div>
+
+                <div class="security-box">
+                    <h3>Login History</h3>
+                    <div id="loginHistory" class="login-history">
+                        <!-- Login history will be populated here -->
+                    </div>
+                </div>
+
+                <div class="security-box">
+                    <h3>Logout All Sessions</h3>
+                    <p>End all active sessions on other devices</p>
+                    <button class="btn btn-danger" onclick="logoutAllSessions()">> Logout All Sessions</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

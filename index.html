@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN - Learn Ethical Hacking</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="lang.js"></script>
+    <style>
+        .landing-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .landing-section {
+            background: rgba(0, 255, 150, 0.03);
+            border: 1px solid rgba(0, 255, 150, 0.3);
+            padding: 30px;
+            border-radius: 5px;
+            margin: 25px 0;
+        }
+
+        .landing-section h2 {
+            color: #00ff96;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        .landing-section p {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .features-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: rgba(0, 255, 255, 0.05);
+            padding: 12px;
+            border-left: 3px solid #00ffff;
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .landing-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .option-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #00ff96;
+            padding: 25px;
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .option-card:hover {
+            background: rgba(0, 255, 150, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 150, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .option-card h3 {
+            color: #00ff96;
+            margin-bottom: 10px;
+        }
+
+        .option-card p {
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .step-guide {
+            background: rgba(0, 255, 100, 0.05);
+            border-left: 4px solid #00ff64;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .step-guide h4 {
+            color: #00ff64;
+            margin-bottom: 8px;
+        }
+
+        .step-guide p {
+            color: #bbb;
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .btn-large {
+            padding: 12px 25px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .landing-options {
+                grid-template-columns: 1fr;
+            }
+
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="langEnBtn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" id="langCkbBtn" onclick="setLanguage('ckb')">کوردی</button>
+    </div>
+
+    <div class="container landing-container">
+        <div class="landing-content">
+            <div class="raven-title">RAVEN</div>
+            <div class="creator-credit">created by dana namat</div>
+            <div class="chinese-chars">黑客 | 入侵 | 网络</div>
+
+            <!-- What is RAVEN -->
+            <div class="landing-section" style="text-align: center; margin-top: 40px;">
+                <h2 style="color: #00ff96; font-size: 28px;">🎮 HACKER CHALLENGE ARENA</h2>
+                <p style="color: #fff; font-size: 18px; margin: 15px 0;">Solve puzzles. Climb the leaderboard. Become
+                    the #1 hacker!</p>
+                <p style="color: #ccc;">Compete with players worldwide. Easy to hard puzzles. Win points and level up!
+                </p>
+            </div>
+
+            <!-- Big Call to Action Button -->
+            <div style="text-align: center; margin: 30px 0;">
+                <button class="btn btn-primary btn-large" style="font-size: 18px; padding: 15px 40px;"
+                    onclick="window.location.href='ctf.html'">
+                    ▶️ START PLAYING NOW
+                </button>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="landing-section" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                <div style="text-align: center;">
+                    <p style="color: #00ff96; font-size: 24px; font-weight: bold; margin: 0;">8</p>
+                    <p style="color: #ccc; margin: 0; font-size: 12px;">Challenges</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="color: #00ffff; font-size: 24px; font-weight: bold; margin: 0;">LEVELS</p>
+                    <p style="color: #ccc; margin: 0; font-size: 12px;">Easy to Hard</p>
+                </div>
+                <div style="text-align: center;">
+                    <p style="color: #ff00ff; font-size: 24px; font-weight: bold; margin: 0;">∞</p>
+                    <p style="color: #ccc; margin: 0; font-size: 12px;">Play Free</p>
+                </div>
+            </div>
+
+            <!-- How to Play -->
+            <div class="landing-section" style="text-align: center;">
+                <h2 style="color: #00ff96;">⚡ HOW TO PLAY</h2>
+                <p style="color: #ccc; font-size: 16px; line-height: 1.8;">
+                    1️⃣ <strong>Play</strong> - Solve challenges and earn points<br>
+                    2️⃣ <strong>Level Up</strong> - Reach higher levels<br>
+                    3️⃣ <strong>Compete</strong> - Climb the leaderboard and become #1!<br>
+                </p>
+            </div>
+        </div>
+
+        <!-- Special Section -->
+        <div style="text-align: center; margin-top: 40px; padding: 20px;">
+            <a href="love.html" style="color: #ff69b4; text-decoration: none; font-size: 12px;">💝 Special
+                Message</a>
+        </div>
+    </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

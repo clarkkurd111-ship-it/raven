@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <div class="container">
+        <div class="raven-title">RAVEN</div>
+        <div class="creator-credit">created by dana namat</div>
+        <div class="chinese-chars">黑客 | 入侵 | 网络</div>
+        <div class="dashboard-wrapper">
+            <div class="dashboard-box">
+                <div class="dashboard-header">
+                    <h2>> Dashboard</h2>
+                    <div class="header-buttons">
+                        <button class="btn profile-btn" onclick="window.location.href='profile.html'">> My
+                            Profile</button>
+                        <button onclick="logout()" class="btn logout-btn">> Logout</button>
+                    </div>
+                </div>
+
+                <div class="user-info">
+                    <p>System User: <span id="userEmail" class="highlight"></span></p>
+                    <p>Full Name: <span id="userFullName" class="highlight"></span></p>
+                    <p>Status: <span id="userStatus" class="status-badge status-online">● ONLINE</span></p>
+                </div>
+
+                <div class="dashboard-content">
+                    <h3>>> Access Granted</h3>
+                    <ul class="feature-list">
+                        <li>✓ <a href="profile.html" style="color: #00ff96; text-decoration: none;">User Profile
+                                Management</a></li>
+                        <li>✓ <a href="activity.html" style="color: #00ff96; text-decoration: none;">Secure
+                                Authentication (Login History)</a></li>
+                        <li>✓ <a href="profile.html" style="color: #00ff96; text-decoration: none;">Session
+                                Management</a></li>
+                        <li>✓ Email Verification</li>
+                        <li>✓ Password Reset</li>
+                    </ul>
+                    <button class="btn" onclick="window.location.href='activity.html'" style="margin-top: 20px;">> View
+                        Login Activity</button>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3>>> Change Password</h3>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword"
+                                placeholder="> Enter current password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword"
+                                placeholder="> Enter new password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword"
+                                placeholder="> Confirm password" required>
+                        </div>
+                        <button type="submit" class="btn">> Update Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

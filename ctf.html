@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN CTF - Capture The Flag Challenges</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="lang.js"></script>
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="langEnBtn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" id="langCkbBtn" onclick="setLanguage('ckb')">کوردی</button>
+    </div>
+
+    <div class="ctf-container">
+        <nav class="ctf-nav">
+            <div class="nav-left">
+                <h1 class="nav-title">⚫ RAVEN CTF</h1>
+                <p class="nav-subtitle">Hacker Challenge Platform</p>
+            </div>
+            <div class="nav-right">
+                <span id="navUser" class="nav-user"></span>
+                <a href="writeups.html" class="nav-link">> Writeups</a>
+                <a href="forum.html" class="nav-link">> Forum</a>
+                <a href="admin.html" class="nav-link" style="color: #ff6b6b;">> Admin</a>
+                <a href="index.html" class="nav-link">> Home</a>
+            </div>
+        </nav>
+
+        <!-- Homepage Section -->
+        <div id="ctf-home" class="ctf-section active">
+            <div class="hero">
+                <h1>RAVEN CTF</h1>
+                <p>Solve Security Challenges & Learn Ethical Hacking</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" onclick="showLogin()">> Log In / Sign Up</button>
+                    <button class="btn btn-secondary" onclick="scrollToSection('challenges')">> Browse
+                        Challenges</button>
+                </div>
+                <p style="color: #999; font-size: 13px; margin-top: 15px;">💡 Tip: You can try challenges without an
+                    account!</p>
+            </div>
+
+            <div
+                style="background: rgba(0, 255, 150, 0.05); border: 1px solid rgba(0, 255, 150, 0.2); padding: 20px; border-radius: 5px; margin: 30px 0; max-width: 700px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: #00ff96; margin-bottom: 10px;">How RAVEN Works:</h3>
+                <ol style="color: #ccc; line-height: 1.8; padding-left: 20px;">
+                    <li><strong>Browse</strong> a challenge and read the description</li>
+                    <li><strong>Analyze</strong> the problem to find the vulnerability</li>
+                    <li><strong>Find the flag</strong> (usually a special code or phrase)</li>
+                    <li><strong>Submit</strong> the flag to earn points</li>
+                    <li><strong>Compete</strong> on the leaderboard and earn badges</li>
+                </ol>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <h3>🎮 8 Challenges</h3>
+                    <p>From SQL Injection to Reverse Engineering - grow your skills</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🏆 Leaderboard</h3>
+                    <p>See your rank and compete with other hackers globally</p>
+                </div>
+                <div class="feature-card">
+                    <h3>⭐ Badges</h3>
+                    <p>Unlock achievements for solving challenges</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📚 Writeups</h3>
+                    <p>Learn from community solutions and walkthroughs</p>
+                </div>
+                <div class="feature-card">
+                    <h3>💬 Forum</h3>
+                    <p>Ask questions and discuss strategies with others</p>
+                </div>
+                <div class="feature-card">
+                    <h3>👥 Teams</h3>
+                    <p>Team up with friends and compete together</p>
+                </div>
+            </div>
+
+            <!-- Public Challenges Preview -->
+            <div id="challenges" class="challenges-section">
+                <h2>> Start Here: Available Challenges</h2>
+                <div class="challenges-grid" id="publicChallenges">
+                    <!-- Will be populated by JS -->
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-box">
+                    <h3 id="totalChallenges">0</h3>
+                    <p>Total Challenges</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="totalUsers">0</h3>
+                    <p>Active Hackers</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="totalSolved">0</h3>
+                    <p>Challenges Solved</p>
+                </div>
+                <div class="stat-box">
+                    <h3 id="totalPoints">0</h3>
+                    <p>Points Earned</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth Section -->
+        <div id="ctf-auth" class="ctf-section">
+            <div class="auth-container">
+                <div id="loginForm" class="auth-form active">
+                    <h2>> Login</h2>
+                    <form id="ctfLoginForm">
+                        <input type="email" placeholder="> Email" id="loginEmail" required>
+                        <input type="password" placeholder="> Password" id="loginPassword" required>
+                        <button type="submit" class="btn btn-primary">> Login</button>
+                    </form>
+                    <p>New hacker? <a href="#" onclick="switchAuthTab('register')">> Register here</a></p>
+                </div>
+
+                <div id="registerForm" class="auth-form">
+                    <h2>> Register</h2>
+                    <form id="ctfRegisterForm">
+                        <input type="text" placeholder="> Alias" id="regAlias" required>
+                        <input type="email" placeholder="> Email" id="regEmail" required>
+                        <input type="password" placeholder="> Password" id="regPassword" required>
+                        <input type="password" placeholder="> Confirm" id="regConfirm" required>
+                        <button type="submit" class="btn btn-primary">> Join RAVEN</button>
+                    </form>
+                    <p>Already a hacker? <a href="#" onclick="switchAuthTab('login')">> Login here</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section (After Login) -->
+        <div id="ctf-dashboard" class="ctf-section">
+            <div class="dashboard-header">
+                <div>
+                    <h2>👤 <span id="dashAlias"></span></h2>
+                    <p>Rank: <span id="dashRank" class="rank-badge"></span></p>
+                </div>
+                <div class="dashboard-stats">
+                    <div class="stat">
+                        <p>Score</p>
+                        <h3 id="dashScore">0</h3>
+                    </div>
+                    <div class="stat">
+                        <p>Solved</p>
+                        <h3 id="dashSolved">0</h3>
+                    </div>
+                    <div class="stat">
+                        <p>Position</p>
+                        <h3 id="dashPosition">-</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-tabs">
+                <button class="tab-btn active" onclick="switchTab('my-challenges', this)">> Challenges</button>
+                <button class="tab-btn" onclick="switchTab('leaderboard', this)">> 🏆 Leaderboard</button>
+                <button class="btn logout-btn" onclick="logoutFromCTF()">> Logout</button>
+            </div>
+
+            <!-- My Challenges Tab -->
+            <div id="my-challenges" class="tab-content active">
+                <h3>> Available Challenges</h3>
+                <div id="challengesList" class="challenges-list">
+                    <!-- Challenges will load here -->
+                </div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div id="leaderboard" class="tab-content">
+                <h3>> 🏆 GLOBAL LEADERBOARD - Compete to be #1!</h3>
+                <div id="leaderboardList" class="leaderboard">
+                    <!-- Leaderboard will load here -->
+                </div>
+            </div>
+
+            <!-- Challenge Details Modal -->
+            <div id="challengeModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeModal()">&times;</span>
+                    <h2 id="modalTitle"></h2>
+                    <div id="modalBody"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="ctf.js"></script>
+</body>
+
+</html>
