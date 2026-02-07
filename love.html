@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Tina - My Brightest Star</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(180deg, #0a0015 0%, #1a0033 25%, #0f0a2e 50%, #1a0033 75%, #0a0015 100%);
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Galaxy Canvas */
+        #galaxyCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Main Content Container */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Central Message Container */
+        .message-container {
+            text-align: center;
+            max-width: 800px;
+            padding: 40px;
+            background: rgba(10, 0, 30, 0.6);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 105, 180, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 50px rgba(255, 105, 180, 0.2);
+            animation: fadeIn 2s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Message */
+        .main-message {
+            font-size: 2.5rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.8),
+                         0 0 40px rgba(255, 105, 180, 0.6),
+                         0 0 60px rgba(255, 105, 180, 0.4);
+            margin-bottom: 30px;
+            line-height: 1.4;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(255, 105, 180, 0.8),
+                             0 0 40px rgba(255, 105, 180, 0.6),
+                             0 0 60px rgba(255, 105, 180, 0.4);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 105, 180, 1),
+                             0 0 60px rgba(255, 105, 180, 0.8),
+                             0 0 90px rgba(255, 105, 180, 0.6);
+            }
+        }
+
+        .highlight {
+            color: #ff69b4;
+            font-style: italic;
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-size: 1.2rem;
+            color: #b8a9ff;
+            margin-top: 20px;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        /* Planets Container */
+        .planets {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .planet1 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 30% 30%, #ff69b4, #8b008b);
+            box-shadow: 0 0 40px rgba(255, 105, 180, 0.6);
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .planet2 {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #9370db, #4b0082);
+            box-shadow: 0 0 30px rgba(147, 112, 219, 0.6);
+            top: 70%;
+            right: 15%;
+            animation-delay: -5s;
+        }
+
+        .planet3 {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at 30% 30%, #00ffff, #0088cc);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+            bottom: 20%;
+            left: 15%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(20px, -20px) rotate(90deg);
+            }
+            50% {
+                transform: translate(0, -40px) rotate(180deg);
+            }
+            75% {
+                transform: translate(-20px, -20px) rotate(270deg);
+            }
+        }
+
+        /* Back Button */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 20;
+            background: rgba(255, 105, 180, 0.2);
+            color: #ff69b4;
+            border: 2px solid #ff69b4;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .back-button:hover {
+            background: rgba(255, 105, 180, 0.4);
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-message {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .message-container {
+                padding: 30px 20px;
+            }
+
+            .planet1 {
+                width: 50px;
+                height: 50px;
+            }
+
+            .planet2 {
+                width: 40px;
+                height: 40px;
+            }
+
+            .planet3 {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-message {
+                font-size: 1.4rem;
+            }
+
+            .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .message-container {
+                padding: 25px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Back Button -->
+    <a href="index.html" class="back-button">← Back to Home</a>
+
+    <!-- Galaxy Canvas for Stars -->
+    <canvas id="galaxyCanvas"></canvas>
+
+    <!-- Floating Planets -->
+    <div class="planets">
+        <div class="planet planet1"></div>
+        <div class="planet planet2"></div>
+        <div class="planet planet3"></div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="message-container">
+            <h1 class="main-message">
+                <span class="highlight">Tina</span>, you are the brightest star in my galaxy.
+            </h1>
+            <p class="subtitle">
+                ✨ In the infinite cosmos of my universe, you shine the most brilliantly ✨
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Galaxy Animation with Twinkling Stars and Shooting Stars
+        class Galaxy {
+            constructor() {
+                this.canvas = document.getElementById('galaxyCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.width = this.canvas.width = window.innerWidth;
+                this.height = this.canvas.height = window.innerHeight;
+                
+                this.stars = [];
+                this.shootingStars = [];
+                
+                // Create stars
+                this.createStars(300);
+                
+                // Animation
+                this.animate();
+                
+                // Handle resize
+                window.addEventListener('resize', () => this.handleResize());
+                
+                // Create shooting stars periodically
+                setInterval(() => this.createShootingStar(), 2000);
+            }
+            
+            createStars(count) {
+                for (let i = 0; i < count; i++) {
+                    this.stars.push({
+                        x: Math.random() * this.width,
+                        y: Math.random() * this.height,
+                        size: Math.random() * 2 + 0.5,
+                        opacity: Math.random(),
+                        twinkleSpeed: Math.random() * 0.02 + 0.01,
+                        twinkleDirection: Math.random() > 0.5 ? 1 : -1,
+                        glowIntensity: Math.random() * 10 + 5
+                    });
+                }
+            }
+            
+            createShootingStar() {
+                const startX = Math.random() * this.width;
+                const startY = Math.random() * (this.height / 2);
+                
+                this.shootingStars.push({
+                    x: startX,
+                    y: startY,
+                    length: Math.random() * 80 + 60,
+                    speed: Math.random() * 10 + 8,
+                    angle: Math.PI / 4 + Math.random() * 0.3,
+                    life: 1,
+                    decay: 0.02
+                });
+            }
+            
+            handleResize() {
+                this.width = this.canvas.width = window.innerWidth;
+                this.height = this.canvas.height = window.innerHeight;
+            }
+            
+            animate() {
+                // Clear canvas
+                this.ctx.fillStyle = 'rgba(10, 0, 21, 0.1)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                // Draw and update stars
+                this.stars.forEach((star, index) => {
+                    // Update twinkle
+                    star.opacity += star.twinkleSpeed * star.twinkleDirection;
+                    
+                    // Reverse twinkle direction at bounds
+                    if (star.opacity >= 1 || star.opacity <= 0.3) {
+                        star.twinkleDirection *= -1;
+                    }
+                    
+                    // Draw star
+                    this.ctx.save();
+                    this.ctx.globalAlpha = star.opacity;
+                    this.ctx.fillStyle = '#ffffff';
+                    this.ctx.shadowBlur = star.glowIntensity;
+                    this.ctx.shadowColor = '#ffffff';
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                });
+                
+                // Draw and update shooting stars
+                this.shootingStars = this.shootingStars.filter(star => {
+                    // Update position
+                    star.x += Math.cos(star.angle) * star.speed;
+                    star.y += Math.sin(star.angle) * star.speed;
+                    star.life -= star.decay;
+                    
+                    if (star.life > 0) {
+                        // Draw shooting star trail
+                        const gradient = this.ctx.createLinearGradient(
+                            star.x,
+                            star.y,
+                            star.x - Math.cos(star.angle) * star.length,
+                            star.y - Math.sin(star.angle) * star.length
+                        );
+                        
+                        gradient.addColorStop(0, `rgba(255, 255, 255, ${star.life})`);
+                        gradient.addColorStop(0.5, `rgba(255, 182, 193, ${star.life * 0.5})`);
+                        gradient.addColorStop(1, 'rgba(255, 182, 193, 0)');
+                        
+                        this.ctx.strokeStyle = gradient;
+                        this.ctx.lineWidth = 2;
+                        this.ctx.lineCap = 'round';
+                        
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(star.x, star.y);
+                        this.ctx.lineTo(
+                            star.x - Math.cos(star.angle) * star.length,
+                            star.y - Math.sin(star.angle) * star.length
+                        );
+                        this.ctx.stroke();
+                        
+                        return true;
+                    }
+                    return false;
+                });
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize galaxy
+        new Galaxy();
+        
+        // Add interactive star hover effect
+        const canvas = document.getElementById('galaxyCanvas');
+        canvas.addEventListener('mousemove', (e) => {
+            const ctx = canvas.getContext('2d');
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Create sparkle effect around cursor
+            ctx.save();
+            ctx.globalAlpha = 0.6;
+            ctx.fillStyle = '#ff69b4';
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ff69b4';
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        });
+    </script>
+</body>
+
+</html>
