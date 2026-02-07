@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN CTF - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="lang.js"></script>
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="langEnBtn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" id="langCkbBtn" onclick="setLanguage('ckb')">کوردی</button>
+    </div>
+
+    <div class="ctf-container">
+        <nav class="ctf-nav">
+            <div class="nav-left">
+                <h1 class="nav-title">⚫ RAVEN - Admin</h1>
+            </div>
+            <div class="nav-right">
+                <a href="ctf.html" class="nav-link">> Challenges</a>
+                <a href="writeups.html" class="nav-link">> Writeups</a>
+                <a href="forum.html" class="nav-link">> Forum</a>
+                <a href="index.html" class="nav-link">> Home</a>
+            </div>
+        </nav>
+
+        <div style="margin-top: 70px; padding: 30px;">
+            <div
+                style="background: rgba(255, 100, 100, 0.08); border: 1px solid rgba(255, 100, 100, 0.3); padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <h3 style="color: #ff6b6b; margin: 0 0 5px 0;">⚙️ Admin Dashboard</h3>
+                <p style="color: #ccc; margin: 0; font-size: 13px;">Manage challenges, users, tournaments, and view
+                    analytics. Only accessible to admins.</p>
+            </div>
+
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" onclick="switchAdminTab('dashboard', this)">> Dashboard</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('create-challenge', this)">> Create
+                    Challenge</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('manage-users', this)">> Manage Users</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('tournaments', this)">> Tournaments</button>
+                <button class="admin-tab-btn" onclick="switchAdminTab('analytics', this)">> Analytics</button>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="admin-tab-content active">
+                <h2>> Admin Dashboard</h2>
+                <div class="admin-stats">
+                    <div class="admin-stat-box">
+                        <h3>Total Users</h3>
+                        <p id="adminTotalUsers">0</p>
+                    </div>
+                    <div class="admin-stat-box">
+                        <h3>Total Challenges</h3>
+                        <p id="adminTotalChallenges">0</p>
+                    </div>
+                    <div class="admin-stat-box">
+                        <h3>Total Points Awarded</h3>
+                        <p id="adminTotalPoints">0</p>
+                    </div>
+                    <div class="admin-stat-box">
+                        <h3>Active Sessions</h3>
+                        <p id="adminActiveSessions">0</p>
+                    </div>
+                </div>
+                <h3>> Recent Activity</h3>
+                <div id="recentActivity" class="activity-log"></div>
+            </div>
+
+            <!-- Create Challenge Tab -->
+            <div id="create-challenge" class="admin-tab-content">
+                <h2>> Create New Challenge</h2>
+                <form id="createChallengeForm" class="admin-form">
+                    <div class="form-row">
+                        <input type="text" placeholder="Challenge Title" id="challengeTitle" required>
+                        <input type="text" placeholder="Category" id="challengeCategory" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" placeholder="Points" id="challengePoints" required>
+                        <select id="challengeDifficulty">
+                            <option>beginner</option>
+                            <option>intermediate</option>
+                            <option>advanced</option>
+                        </select>
+                    </div>
+                    <textarea placeholder="Description" id="challengeDesc" rows="5" required></textarea>
+                    <textarea placeholder="Hint (optional)" id="challengeHint" rows="3"></textarea>
+                    <input type="text" placeholder="Flag (answer)" id="challengeFlag" required>
+                    <button type="submit" class="btn btn-primary">> Create Challenge</button>
+                </form>
+            </div>
+
+            <!-- Manage Users Tab -->
+            <div id="manage-users" class="admin-tab-content">
+                <h2>> Manage Users</h2>
+                <div id="usersList" class="admin-users-list"></div>
+            </div>
+
+            <!-- Tournaments Tab -->
+            <div id="tournaments" class="admin-tab-content">
+                <h2>> Create Tournament</h2>
+                <form id="createTournamentForm" class="admin-form">
+                    <input type="text" placeholder="Tournament Name" id="tournamentName" required>
+                    <textarea placeholder="Description" id="tournamentDesc" rows="3"></textarea>
+                    <div class="form-row">
+                        <input type="datetime-local" placeholder="Start Time" id="tournamentStart" required>
+                        <input type="datetime-local" placeholder="End Time" id="tournamentEnd" required>
+                    </div>
+                    <input type="number" placeholder="Prize Pool ($)" id="tournamentPrize">
+                    <button type="submit" class="btn btn-primary">> Create Tournament</button>
+                </form>
+                <h3 style="margin-top: 30px;"> Active Tournaments</h3>
+                <div id="tournamentsList"></div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div id="analytics" class="admin-tab-content">
+                <h2>> Platform Analytics</h2>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3>Users by Rank</h3>
+                        <div id="rankStats"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Challenge Difficulty Distribution</h3>
+                        <div id="difficultyStats"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Top Solvers</h3>
+                        <div id="topSolvers"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Challenge Popularity</h3>
+                        <div id="challengePopularity"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="ctf.js"></script>
+    <script src="admin.js"></script>
+</body>
+
+</html>

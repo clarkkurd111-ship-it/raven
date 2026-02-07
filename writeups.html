@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN CTF - Challenge Writeups</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="lang.js"></script>
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" id="langEnBtn" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" id="langCkbBtn" onclick="setLanguage('ckb')">کوردی</button>
+    </div>
+
+    <div class="ctf-container">
+        <nav class="ctf-nav">
+            <div class="nav-left">
+                <h1 class="nav-title">⚫ RAVEN CTF - Writeups</h1>
+            </div>
+            <div class="nav-right">
+                <a href="ctf.html" class="nav-link">> Challenges</a>
+                <a href="forum.html" class="nav-link">> Forum</a>
+                <a href="admin.html" class="nav-link" style="color: #ff6b6b;">> Admin</a>
+                <a href="index.html" class="nav-link">> Home</a>
+            </div>
+        </nav>
+
+        <div style="margin-top: 70px; padding: 40px 20px;">
+            <div class="writeup-header">
+                <h2>> Challenge Writeups & Solutions</h2>
+                <p>Learn how other hackers solved challenges</p>
+                <button class="btn btn-primary" onclick="showWriteupForm()">> Share Your Solution</button>
+            </div>
+
+            <div style="background: rgba(0, 255, 150, 0.05); border: 1px solid rgba(0, 255, 150, 0.2); padding: 20px; border-radius: 5px; margin: 20px 0;">
+                <h3 style="color: #00ff96; margin-bottom: 10px;">📚 What Are Writeups?</h3>
+                <p style="color: #ccc; line-height: 1.6; margin: 0;">Writeups are tutorials and walkthroughs written by community members explaining how they solved a challenge. They include hints, techniques, and step-by-step solutions. Great for learning new hacking methods!</p>
+            </div>
+
+            <!-- Writeup Form Modal -->
+            <div id="writeupFormModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeWriteupForm()">&times;</span>
+                    <h2>Write a Writeup</h2>
+                    <p style="color: #999; font-size: 13px; margin-bottom: 15px;">Share your solution with the community and help others learn</p>
+                    <form id="createWriteupForm">
+                        <select id="challengeSelect" required>
+                            <option>Select Challenge...</option>
+                            <option value="1">SQL Injection Basics</option>
+                            <option value="2">Caesar Cipher</option>
+                            <option value="3">XSS Vulnerability</option>
+                            <option value="4">Hash Cracking</option>
+                            <option value="5">Buffer Overflow</option>
+                            <option value="6">CSRF Attack</option>
+                            <option value="7">Reverse Engineering</option>
+                            <option value="8">LFI/RFI</option>
+                        </select>
+                        <textarea placeholder="Your writeup... (explain your approach, tools used, solution steps)" id="writeupContent" rows="10" required></textarea>
+                        <input type="text" placeholder="Tags (comma separated, e.g., sql, injection, database)" id="writeupTags">
+                        <button type="submit" class="btn btn-primary">> Publish Writeup</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Filter & Search -->
+            <div class="writeup-filters">
+                <input type="text" id="searchWriteups" placeholder="> Search writeups..." class="search-input">
+                <select id="filterChallenge" onchange="filterWriteups()">
+                    <option value="">All Challenges</option>
+                    <option value="1">SQL Injection</option>
+                    <option value="2">Caesar Cipher</option>
+                    <option value="3">XSS</option>
+                    <option value="4">Hash Cracking</option>
+                    <option value="5">Buffer Overflow</option>
+                    <option value="6">CSRF</option>
+                    <option value="7">Reverse Eng</option>
+                    <option value="8">LFI/RFI</option>
+                </select>
+            </div>
+
+            <!-- Writeups List -->
+            <div id="writeupsList" class="writeups-list">
+                <!-- Writeups will load here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="ctf.js"></script>
+    <script>
+        // Writeup Management
+        function showWriteupForm() {
+            document.getElementById('writeupFormModal').style.display = 'block';
+        }
+
+        function closeWriteupForm() {
+            document.getElementById('writeupFormModal').style.display = 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadWriteups();
+
+            const createWriteupForm = document.getElementById('createWriteupForm');
+            if (createWriteupForm) {
+                createWriteupForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    const userEmail = localStorage.getItem('ctfUserEmail');
+                    const userAlias = localStorage.getItem('ctfUserAlias');
+
+                    if (!userEmail) {
+                        showAlert('Please login first', 'error');
+                        return;
+                    }
+
+                    const writeup = {
+                        id: Date.now(),
+                        author: userAlias,
+                        email: userEmail,
+                        challengeId: document.getElementById('challengeSelect').value,
+                        content: document.getElementById('writeupContent').value,
+                        tags: document.getElementById('writeupTags').value.split(','),
+                        date: new Date().toISOString(),
+                        likes: 0,
+                        views: 0
+                    };
+
+                    let writeups = JSON.parse(localStorage.getItem('writeups')) || [];
+                    writeups.push(writeup);
+                    localStorage.setItem('writeups', JSON.stringify(writeups));
+
+                    showAlert('Writeup published!', 'success');
+                    closeWriteupForm();
+                    createWriteupForm.reset();
+                    loadWriteups();
+                });
+            }
+
+            // Search functionality
+            document.getElementById('searchWriteups').addEventListener('input', function(e) {
+                filterWriteups();
+            });
+        });
+
+        function loadWriteups() {
+            const writeups = JSON.parse(localStorage.getItem('writeups')) || [];
+            const writeupsList = document.getElementById('writeupsList');
+
+            if (writeups.length === 0) {
+                writeupsList.innerHTML = '<p style="color: #888; text-align: center;">No writeups yet - be the first!</p>';
+                return;
+            }
+
+            const sorted = writeups.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            writeupsList.innerHTML = sorted.map(writeup => {
+                const challengeNames = {
+                    '1': 'SQL Injection',
+                    '2': 'Caesar Cipher',
+                    '3': 'XSS',
+                    '4': 'Hash Cracking',
+                    '5': 'Buffer Overflow',
+                    '6': 'CSRF',
+                    '7': 'Reverse Engineering',
+                    '8': 'LFI/RFI'
+                };
+
+                return `
+                    <div class="writeup-card">
+                        <div class="writeup-header-info">
+                            <h3>${challengeNames[writeup.challengeId]} - Writeup</h3>
+                            <span class="writeup-author">by ${writeup.author}</span>
+                        </div>
+                        <p class="writeup-date">${new Date(writeup.date).toLocaleDateString()}</p>
+                        <div class="writeup-preview">${writeup.content.substring(0, 200)}...</div>
+                        <div class="writeup-tags">
+                            ${writeup.tags.map(tag => `<span class="tag">${tag.trim()}</span>`).join('')}
+                        </div>
+                        <div class="writeup-stats">
+                            <span>👁️ ${writeup.views} views</span>
+                            <span>❤️ ${writeup.likes} likes</span>
+                            <button class="btn btn-small" onclick="viewWriteup(${writeup.id})">> Read Full</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterWriteups() {
+            const searchTerm = document.getElementById('searchWriteups').value.toLowerCase();
+            const filterChallenge = document.getElementById('filterChallenge').value;
+            const writeups = JSON.parse(localStorage.getItem('writeups')) || [];
+
+            let filtered = writeups.filter(w => {
+                const matchesSearch = w.content.toLowerCase().includes(searchTerm) || 
+                                     w.author.toLowerCase().includes(searchTerm) ||
+                                     w.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+                const matchesChallenge = !filterChallenge || w.challengeId === filterChallenge;
+                return matchesSearch && matchesChallenge;
+            });
+
+            const writeupsList = document.getElementById('writeupsList');
+            if (filtered.length === 0) {
+                writeupsList.innerHTML = '<p style="color: #888; text-align: center;">No writeups found</p>';
+                return;
+            }
+
+            const challengeNames = {
+                '1': 'SQL Injection',
+                '2': 'Caesar Cipher',
+                '3': 'XSS',
+                '4': 'Hash Cracking',
+                '5': 'Buffer Overflow',
+                '6': 'CSRF',
+                '7': 'Reverse Engineering',
+                '8': 'LFI/RFI'
+            };
+
+            writeupsList.innerHTML = filtered.map(writeup => `
+                <div class="writeup-card">
+                    <div class="writeup-header-info">
+                        <h3>${challengeNames[writeup.challengeId]} - Writeup</h3>
+                        <span class="writeup-author">by ${writeup.author}</span>
+                    </div>
+                    <p class="writeup-date">${new Date(writeup.date).toLocaleDateString()}</p>
+                    <div class="writeup-preview">${writeup.content.substring(0, 200)}...</div>
+                    <div class="writeup-tags">
+                        ${writeup.tags.map(tag => `<span class="tag">${tag.trim()}</span>`).join('')}
+                    </div>
+                    <div class="writeup-stats">
+                        <span>👁️ ${writeup.views} views</span>
+                        <span>❤️ ${writeup.likes} likes</span>
+                        <button class="btn btn-small" onclick="viewWriteup(${writeup.id})">> Read Full</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewWriteup(id) {
+            const writeups = JSON.parse(localStorage.getItem('writeups')) || [];
+            const writeup = writeups.find(w => w.id === id);
+
+            if (!writeup) return;
+
+            writeup.views = (writeup.views || 0) + 1;
+            localStorage.setItem('writeups', JSON.stringify(writeups));
+
+            alert(`WRITEUP: ${writeup.content}\n\nViews: ${writeup.views}`);
+        }
+    </script>
+</body>
+
+</html>

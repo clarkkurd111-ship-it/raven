@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN | Secure Portal Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <div class="container">
+        <div class="raven-title">RAVEN</div>
+        <div class="creator-credit">created by dana namat</div>
+        <div class="chinese-chars">黑客 | 入侵 | 网络</div>
+        <div class="form-wrapper">
+            <div class="form-box login-box">
+                <h2>Secure Portal - Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" name="email" placeholder="> Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" name="password" placeholder="> Enter your password"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <label for="rememberMe" class="checkbox-label">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn">> Login</button>
+                </form>
+                <p class="toggle-text">
+                    No account? <a href="register.html">> Register here</a>
+                </p>
+                <p class="toggle-text">
+                    <a href="forgot-password.html">> Forgot Password?</a>
+                </p>
+                <p class="toggle-text">
+                    <a href="index.html">> Back Home</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

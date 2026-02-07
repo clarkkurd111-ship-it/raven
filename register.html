@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN | Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <div class="container">
+        <div class="raven-title">RAVEN</div>
+        <div class="creator-credit">created by dana namat</div>
+        <div class="chinese-chars">黑客 | 入侵 | 网络</div>
+        <div class="form-wrapper">
+            <div class="form-box register-box">
+                <h2>Register</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerFullName">Full Name</label>
+                        <input type="text" id="registerFullName" name="fullName" placeholder="> Enter your name"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" name="email" placeholder="> Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" name="password" placeholder="> Enter your password"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                            placeholder="> Confirm password" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                        <label for="agreeTerms" class="checkbox-label">I agree to the Terms & Conditions</label>
+                    </div>
+                    <button type="submit" class="btn">> Register</button>
+                </form>
+                <p class="toggle-text">
+                    Already have an account? <a href="index.html">> Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

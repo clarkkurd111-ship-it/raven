@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN | Login Activity</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <div class="container">
+        <div class="raven-title">RAVEN</div>
+        <div class="creator-credit">created by dana namat</div>
+        <div class="chinese-chars">黑客 | 入侵 | 网络</div>
+
+        <div class="activity-wrapper">
+            <div class="activity-header">
+                <h2>> Login Activity Monitor</h2>
+                <div class="header-controls">
+                    <button class="btn" onclick="refreshActivity()">> Refresh</button>
+                    <button class="btn" onclick="window.location.href='profile.html'">> Back to Profile</button>
+                </div>
+            </div>
+
+            <!-- Currently Logged In -->
+            <div class="activity-section">
+                <h3>>> Currently Logged In</h3>
+                <div id="currentlyLoggedIn" class="logged-in-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- All Login History -->
+            <div class="activity-section">
+                <h3>>> All Login History</h3>
+                <div id="allLoginHistory" class="history-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Failed Login Attempts -->
+            <div class="activity-section">
+                <h3>>> Failed Login Attempts</h3>
+                <div id="failedLogins" class="failed-list">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function loadActivityData() {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const currentlyLoggedInDiv = document.getElementById('currentlyLoggedIn');
+            const allHistoryDiv = document.getElementById('allLoginHistory');
+            const failedLoginsDiv = document.getElementById('failedLogins');
+
+            // Get currently logged in user
+            const currentUserEmail = localStorage.getItem('userEmail');
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+            // Collect all login data
+            let loginData = [];
+            let currentlyOnline = [];
+
+            users.forEach(user => {
+                const loginHistory = JSON.parse(localStorage.getItem('loginHistory_' + user.email)) || [];
+                const sessions = JSON.parse(localStorage.getItem('sessions_' + user.email)) || [];
+
+                if (sessions.length > 0) {
+                    currentlyOnline.push({
+                        email: user.email,
+                        fullName: user.fullName,
+                        sessions: sessions
+                    });
+                }
+
+                loginHistory.forEach(entry => {
+                    if (entry.success) {
+                        loginData.push({
+                            email: user.email,
+                            fullName: user.fullName,
+                            time: entry.time,
+                            ip: entry.ip,
+                            device: entry.device,
+                            success: true
+                        });
+                    }
+                });
+            });
+
+            // Display Currently Logged In
+            if (currentlyOnline.length === 0) {
+                currentlyLoggedInDiv.innerHTML = '<p style="color: #888;">No active sessions</p>';
+            } else {
+                currentlyLoggedInDiv.innerHTML = currentlyOnline.map(user => `
+                    <div class="online-user">
+                        <div class="user-info">
+                            <h4>${user.fullName}</h4>
+                            <p><strong>Email:</strong> ${user.email}</p>
+                            <p><strong>Active Sessions:</strong> ${user.sessions.length}</p>
+                            <div class="sessions-detail">
+                                ${user.sessions.map(session => `
+                                    <div class="session-badge">
+                                        <span>${session.device}</span>
+                                        <span>${new Date(session.lastActive).toLocaleString()}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ${user.email === currentUserEmail ? '<span class="badge-current">CURRENT USER</span>' : ''}
+                    </div>
+                `).join('');
+            }
+
+            // Display All Login History (sorted by newest first)
+            if (loginData.length === 0) {
+                allHistoryDiv.innerHTML = '<p style="color: #888;">No login history</p>';
+            } else {
+                const sorted = loginData.sort((a, b) => new Date(b.time) - new Date(a.time));
+                allHistoryDiv.innerHTML = sorted.slice(0, 50).map((entry, index) => `
+                    <div class="history-entry">
+                        <div class="entry-number">${index + 1}</div>
+                        <div class="entry-details">
+                            <p><strong>${entry.fullName}</strong></p>
+                            <p>Email: ${entry.email}</p>
+                            <p>Time: ${new Date(entry.time).toLocaleString()}</p>
+                            <p>IP: ${entry.ip} | Device: ${entry.device}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Display Failed Logins
+            const failedAttempts = JSON.parse(localStorage.getItem('failedLoginAttempts')) || [];
+            if (failedAttempts.length === 0) {
+                failedLoginsDiv.innerHTML = '<p style="color: #00ff96;">No failed attempts - All logins successful</p>';
+            } else {
+                failedLoginsDiv.innerHTML = failedAttempts.slice(-20).reverse().map((attempt, index) => `
+                    <div class="failed-entry">
+                        <div class="entry-number fail">⚠</div>
+                        <div class="entry-details">
+                            <p><strong>Failed Login Attempt</strong></p>
+                            <p>Email: ${attempt.email}</p>
+                            <p>Time: ${new Date(attempt.time).toLocaleString()}</p>
+                            <p>Reason: ${attempt.reason}</p>
+                            <p>IP: ${attempt.ip}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function refreshActivity() {
+            loadActivityData();
+            showAlert('Activity data refreshed', 'success');
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadActivityData);
+    </script>
+</body>
+
+</html>
