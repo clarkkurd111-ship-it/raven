@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAVEN | Verify Email</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="rainCanvas"></canvas>
+
+    <div class="container">
+        <div class="raven-title">RAVEN</div>
+        <div class="creator-credit">created by dana namat</div>
+        <div class="chinese-chars">黑客 | 入侵 | 网络</div>
+        <div class="form-wrapper">
+            <div class="form-box login-box">
+                <h2>Verify Email</h2>
+                <p class="verify-info">Enter the verification code sent to your email</p>
+                <form id="verifyEmailForm">
+                    <div class="form-group">
+                        <label for="verificationCode">Verification Code</label>
+                        <input type="text" id="verificationCode" name="code" placeholder="> Enter verification code"
+                            maxlength="6" required>
+                    </div>
+                    <button type="submit" class="btn">> Verify Email</button>
+                </form>
+                <p class="toggle-text">
+                    Already verified? <a href="index.html">> Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const verifyForm = document.getElementById('verifyEmailForm');
+            if (verifyForm) {
+                verifyForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const enteredCode = document.getElementById('verificationCode').value.toUpperCase().trim();
+                    const correctCode = localStorage.getItem('pendingVerificationCode');
+                    const email = localStorage.getItem('pendingVerificationEmail');
+
+                    if (!enteredCode || !correctCode || !email) {
+                        showAlert('Session expired. Please register again.', 'error');
+                        setTimeout(() => {
+                            window.location.href = 'register.html';
+                        }, 2000);
+                        return;
+                    }
+
+                    if (enteredCode !== correctCode) {
+                        showAlert('Invalid verification code!', 'error');
+                        return;
+                    }
+
+                    // Mark email as verified
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    const user = users.find(u => u.email === email);
+                    if (user) {
+                        user.emailVerified = true;
+                        delete user.verificationCode;
+                        localStorage.setItem('users', JSON.stringify(users));
+                    }
+
+                    // Clear pending verification data
+                    localStorage.removeItem('pendingVerificationEmail');
+                    localStorage.removeItem('pendingVerificationCode');
+
+                    showAlert('Email verified successfully! Redirecting to login...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
